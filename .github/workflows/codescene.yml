@@ -1,0 +1,29 @@
+name: CodeScene Analysis
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  codescene-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run CodeScene Analysis
+        run: |
+          docker run --rm \
+            -v "$PWD:/code" \
+            codescene/codescene \
+            analyze \
+            --project "$CODESCENE_PROJECT" \
+            --token "$CODESCENE_TOKEN"
+        env:
+          CODESCENE_TOKEN: ${{ secrets.CODESCENE_TOKEN }}
+          CODESCENE_PROJECT: ${{ secrets.CODESCENE_PROJECT }}

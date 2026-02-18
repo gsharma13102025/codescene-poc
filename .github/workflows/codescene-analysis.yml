@@ -14,10 +14,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run CodeScene Analysis
-        uses: codescene/codescene-github-action@v1
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          codescene-url: ${{ secrets.CODESCENE_URL }}
-          codescene-api-token: ${{ secrets.CODESCENE_API_TOKEN }}
-          repository: ${{ github.repository }}
-          branch: ${{ github.ref_name }}
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Download CodeScene CLI
+        run: curl -L https://downloads.codescene.io/codescene-ci-cd.jar -o codescene-ci-cd.jar
+
+      - name: Run CodeScene Analysis
+        run: |
+          java -jar codescene-ci-cd.jar \
+            --codescene-url ${{ secrets.CODESCENE_URL }} \
+            --api-token ${{ secrets.CODESCENE_API_TOKEN }} \
+            --repository . \
+            --branch ${{ github.ref_name }}
+        continue-on-error: true

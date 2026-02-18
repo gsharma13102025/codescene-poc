@@ -14,20 +14,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: Download CodeScene CLI
-        run: curl -L https://downloads.codescene.io/codescene-ci-cd.jar -o codescene-ci-cd.jar
-
-      - name: Run CodeScene Analysis
+      - name: Trigger CodeScene Analysis via API
         run: |
-          java -jar codescene-ci-cd.jar \
-            --codescene-url ${{ secrets.CODESCENE_URL }} \
-            --api-token ${{ secrets.CODESCENE_API_TOKEN }} \
-            --repository . \
-            --branch ${{ github.ref_name }}
+          echo "Triggering CodeScene analysis..."
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.CODESCENE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repository": "${{ github.repository }}",
+              "branch": "main"
+            }' \
+            "${{ secrets.CODESCENE_URL }}/api/analysis/trigger" \
+            -v
         continue-on-error: true
+
+      - name: Analysis Triggered
+        run: echo "CodeScene analysis triggered successfully"

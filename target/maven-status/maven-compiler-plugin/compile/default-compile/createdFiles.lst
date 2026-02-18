@@ -1,0 +1,10 @@
+com\example\codesenepoc\controller\LegacyController.class
+com\example\codesenepoc\service\UserService.class
+com\example\codesenepoc\controller\LegacyController$DatabaseConnection.class
+com\example\codesenepoc\service\OrderService.class
+com\example\codesenepoc\service\PaymentProcessor.class
+com\example\codesenepoc\controller\UserController.class
+com\example\codesenepoc\repository\UserRepository.class
+com\example\codesenepoc\CodescenePocApplication.class
+com\example\codesenepoc\model\User.class
+com\example\codesenepoc\util\StringUtils.class

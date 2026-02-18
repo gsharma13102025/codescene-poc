@@ -21,11 +21,11 @@ jobs:
           distribution: 'temurin'
 
       - name: Download CodeScene CLI
-        run: curl -L https://downloads.codescene.io/enterprise/latest/codescene-enterprise-edition.standalone.jar?__hstc=79299531.4903809379a4022698f0c886f16f9121.1771384258609.1771384258609.1771395434514.2&__hssc=79299531.1.1771395434514&__hsfp=62b38bba9d6f047935dcd79ae9988e90 -o codescene-enterprise-edition.standalone.jar
+        run: curl -L https://downloads.codescene.io/codescene-ci-cd.jar -o codescene-ci-cd.jar
 
       - name: Run CodeScene Analysis
         run: |
-          java -jar codescene-enterprise-edition.standalone.jar \
+          java -jar codescene-ci-cd.jar \
             --codescene-url ${{ secrets.CODESCENE_URL }} \
             --api-token ${{ secrets.CODESCENE_API_TOKEN }} \
             --repository . \

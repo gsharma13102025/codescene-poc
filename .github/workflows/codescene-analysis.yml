@@ -1,0 +1,23 @@
+name: CodeScene POC Analysis
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  codescene:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Run CodeScene Analysis
+        uses: codescene/codescene-github-action@v1
+        with:
+          codescene-url: ${{ secrets.CODESCENE_URL }}
+          codescene-api-token: ${{ secrets.CODESCENE_API_TOKEN }}
+          repository: ${{ github.repository }}
+          branch: ${{ github.ref_name }}

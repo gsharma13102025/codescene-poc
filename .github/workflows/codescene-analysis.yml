@@ -10,33 +10,24 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Verify Secrets Exist
-        run: |
-          echo "Checking secrets..."
-          [ -n "${{ secrets.CODESCENE_URL }}" ] && echo "✅ CODESCENE_URL is set" || echo "❌ CODESCENE_URL is missing"
-          [ -n "${{ secrets.CODESCENE_API_TOKEN }}" ] && echo "✅ CODESCENE_API_TOKEN is set" || echo "❌ CODESCENE_API_TOKEN is missing"
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Test CodeScene Connection
-        run: |
-          echo "Testing connection to CodeScene..."
-          curl -s -H "Authorization: Bearer ${{ secrets.CODESCENE_API_TOKEN }}" \
-            "${{ secrets.CODESCENE_URL }}/api/health" \
-            -o /dev/null -w "HTTP Status: %{http_code}\n"
-        continue-on-error: true
+      - name: Download CodeScene CLI
+        run: curl -L https://downloads.codescene.io/enterprise/latest/codescene-enterprise-edition.standalone.jar?__hstc=79299531.4903809379a4022698f0c886f16f9121.1771384258609.1771384258609.1771395434514.2&__hssc=79299531.1.1771395434514&__hsfp=62b38bba9d6f047935dcd79ae9988e90 -o codescene-enterprise-edition.standalone.jar
 
-      - name: Trigger Analysis
+      - name: Run CodeScene Analysis
         run: |
-          echo "Triggering CodeScene analysis..."
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.CODESCENE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "repository": "${{ github.repository }}",
-              "branch": "main"
-            }' \
-            "${{ secrets.CODESCENE_URL }}/api/analysis/trigger"
+          java -jar codescene-enterprise-edition.standalone.jar \
+            --codescene-url ${{ secrets.CODESCENE_URL }} \
+            --api-token ${{ secrets.CODESCENE_API_TOKEN }} \
+            --repository . \
+            --branch ${{ github.ref_name }}
         continue-on-error: true
